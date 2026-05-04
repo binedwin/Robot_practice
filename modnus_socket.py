@@ -10,4 +10,5 @@ from PyQt6.QtWidgets import(
     QVBoxLayout,
     QHBoxLayout
 )
-from PyQt6.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import QTimer
+from pymodbus.client import ModbusTcp client
