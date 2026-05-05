@@ -1,6 +1,6 @@
 import pyrealsense2 as rs #리얼센스 카메라를 제어하는 라이브러리
 import numpy as np #이미지 데이터를 배열 형태로 처리하기 위한 라이브러리
-import cv2 # opencv 영상처리 영상출력을 위해서 사용
+import cv2 # opencv 영상처리 영상출력을 위해서 사용한다
 
 #파이프라인 먼저 설정
 pipeline = rs.pipeline() # 파이프라인 객체생성
