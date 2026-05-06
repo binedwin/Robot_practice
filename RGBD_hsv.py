@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+=======
+import pyrealsense2 as rs #리얼센스 카메라를 제어하는 라이브러리
+import numpy as np #이미지 데이터를 배열 형태로 처리하기 위한 라이브러리
+import cv2 # opencv 영상처리 영상출력을 위해서 사용한다
+>>>>>>> 0dad1bb4329c7d7616a70bb3072cd3b77dd9239f
 
 # 파이프라인 먼저 설정
 pipeline = rs.pipeline()
@@ -77,5 +83,10 @@ try:
             break
 
 finally:
+<<<<<<< HEAD
     pipeline.stop()
     cv2.destroyAllWindows()
+=======
+    pipeline.stop() # 영상 리소스 해제
+    cv2.destroyAllWindows() # 모든 opencv 창을 닫음
+>>>>>>> 0dad1bb4329c7d7616a70bb3072cd3b77dd9239f
