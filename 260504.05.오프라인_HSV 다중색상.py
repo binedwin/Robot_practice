@@ -1,0 +1,78 @@
+import pyrealsense2 as rs #리얼센스카메라를 제어하는 라이브러리
+import numpy as np #이미지 데이터를 배열 형태로 처리하기 위한 하이브러리
+import cv2 #OpenCV, 영상 처리, 영상 출력을 위해서 사용
+
+#파이프라인 먼저 설정
+pipeline = rs.pipeline() #파이프라인 객체 생성
+config = rs.config() #해상도, 영상종류, 프레임을 사용하기 위한 설정 객체를 생성
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+#RGB기반 컬러 스트림을 생성, 해상도, 8bit, 30프레임
+
+pipeline.start(config) #파이프라인 시작
+
+try:
+  while True:
+    frames = pipeline.wait_for_frames() # 카메라의 실시간 최신 프레임을 수신(색상, 깊이, 자이로..정보..)
+    color_frame = frames.get_color_frame() #그 중에서 컬러 프레임만 추출
+
+    if not color_frame: #만약 컬러 프레임이 없으면, 처음 루프로 빠져나가서 수신 실패 방지
+      continue
+    #컬러 프레임을 numpy 배열로 변환
+    color_image = np.asanyarray(color_frame.get_data())
+    #BGR 컬러 이미지를 HSV 색 영역으로 변환
+    hsv_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
+
+
+
+    ####add##########
+    ##RED##
+    lower_red1 = np.array([0, 120, 70])
+    upper_red1 = np.array([10, 255, 255])
+
+    lower_red2 = np.array([170, 120, 70])
+    upper_red2 = np.array([180, 255, 255]) #OpenCV에서 색의 범위는 0~360이 아니라 0~180으로 /2
+
+    mask_red1 = cv2.inRange(hsv_image, lower_red1, upper_red1)
+    mask_red2 = cv2.inRange(hsv_image, lower_red2, upper_red2)
+    mask_red = cv2.bitwise_or(mask_red1, mask_red2)
+
+    ##BLUE##
+    lower_blue = np.array([100, 120, 80]) # 어두운 파란색
+    upper_blue = np.array([130, 255, 255]) # 밝은 파란색
+    
+    mask_blue = cv2.inRange(hsv_image, lower_blue, upper_blue)
+
+    ##GREEN##
+    lower_green = np.array([40, 70, 70])
+    upper_green = np.array([80, 255, 255])
+    mask_green = cv2.inRange(hsv_image, lower_green, upper_green)
+
+    #-------픽셀 수 계산
+    red_pixels = cv2.countNonZero(mask_red)
+    blue_pixels = cv2.countNonZero(mask_blue)
+    green_pixels = cv2.countNonZero(mask_green)
+
+    pixels_sum = 500
+
+    #---출력
+
+    if red_pixels > pixels_sum:
+      print("RED")
+    elif blue_pixels > pixels_sum:
+      print("BLUE")
+    elif green_pixels > pixels_sum:
+      print("GREEN")
+
+    #결과 화면
+
+    cv2.imshow("SSAFY RGBD CAMERA STREAM", color_image) #원본
+    cv2.imshow("Red Mask", mask_red) #빨강
+    cv2.imshow("Blue Mask", mask_blue) #블루
+    cv2.imshow("Green Mask", mask_green) #초록
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+      break
+
+finally:
+  pipeline.stop() #리소스 해제
+  cv2.destroyAllWindows() #모든 CV창 종료
