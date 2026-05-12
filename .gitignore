@@ -2,3 +2,4 @@ py311_rgbd
 cctv_venv
 test_venv
 robot
+.venv
